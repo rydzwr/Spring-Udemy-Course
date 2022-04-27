@@ -15,7 +15,6 @@ public class Task
     @NotBlank(message = "Task's description must be not empty")
     private String description;
     private boolean done;
-    @Column()
     private LocalDateTime deadLine;
 
     public Task() { }

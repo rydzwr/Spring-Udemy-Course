@@ -17,6 +17,9 @@ public class Task
     private boolean done;
     private LocalDateTime deadLine;
 
+    @Embedded
+    private Audit audit;
+
     public Task() { }
 
     public int getId()
@@ -48,4 +51,12 @@ public class Task
     {
         this.done = done;
     }
+
+    public void updateFrom(final Task source)
+    {
+        description = source.description;
+        done = source.done;
+        deadLine = source.deadLine;
+    }
+
 }

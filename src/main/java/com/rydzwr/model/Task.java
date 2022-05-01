@@ -27,6 +27,12 @@ public class Task
 
     public Task() { }
 
+    public Task(String description, LocalDateTime deadLine)
+    {
+        this.description = description;
+        this.deadLine = deadLine;
+    }
+
     public int getId()
     {
         return id;
@@ -62,6 +68,11 @@ public class Task
         return group;
     }
 
+    public LocalDateTime getDeadLine()
+    {
+        return deadLine;
+    }
+
     public void updateFrom(final Task source)
     {
         description = source.description;
@@ -69,5 +80,4 @@ public class Task
         deadLine = source.deadLine;
         group = source.group;
     }
-
 }

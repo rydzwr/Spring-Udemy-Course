@@ -3,29 +3,28 @@ package com.rydzwr.model;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 @Entity
-@Table(name = "tasks")
-public class Task
+@Table(name = "tasks_groups")
+public class TaskGroup
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @NotBlank(message = "Task's description must be not empty")
+    @NotBlank(message = "Task group's description must be not empty")
     private String description;
     private boolean done;
-    private LocalDateTime deadLine;
 
-    @Embedded
-    private Audit audit = new Audit();
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "group")
+    private Set<Task> tasks;
 
     @ManyToOne
-    @JoinColumn(name = "task_group_id")
-    private TaskGroup group;
+    @JoinColumn(name = "project_id")
+    private Project project;
 
-    public Task() { }
+    public TaskGroup() { }
 
     public int getId()
     {
@@ -57,17 +56,25 @@ public class Task
         this.done = done;
     }
 
-    public TaskGroup getGroup()
+    public Set<Task> getTasks()
     {
-        return group;
+        return tasks;
     }
 
-    public void updateFrom(final Task source)
+    public void setTasks(Set<Task> tasks)
     {
-        description = source.description;
-        done = source.done;
-        deadLine = source.deadLine;
-        group = source.group;
+        this.tasks = tasks;
     }
 
+    public Project getProject()
+    {
+        return project;
+    }
+
+    public void setProject(Project project)
+    {
+        this.project = project;
+    }
 }
+
+

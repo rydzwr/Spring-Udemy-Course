@@ -18,7 +18,7 @@ public class Task
     private LocalDateTime deadLine;
 
     @Embedded
-    private Audit audit;
+    private Audit audit = new Audit();
 
     public Task() { }
 

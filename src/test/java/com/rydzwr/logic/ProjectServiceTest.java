@@ -12,7 +12,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -34,7 +33,7 @@ class ProjectServiceTest
         var mocConfig = mock(TaskConfigurationProperties.class);
         when(mocConfig.getTemplate()).thenReturn(mockTemplate);
         // system under test
-        var toTest = new ProjectService(null, mockGroupRepository, mocConfig);
+        var toTest = new ProjectService(null, mockGroupRepository, mocConfig, null);
 
         // WHEN + THEN
         assertThatIllegalStateException().isThrownBy(() -> toTest.createGroup(LocalDateTime.now(), 0));
@@ -54,7 +53,7 @@ class ProjectServiceTest
         var mocConfig = mock(TaskConfigurationProperties.class);
         when(mocConfig.getTemplate()).thenReturn(mockTemplate);
         // system under test
-        var toTest = new ProjectService(null, mockGroupRepository, mocConfig);
+        var toTest = new ProjectService(null, mockGroupRepository, mocConfig, null);
 
         // WHEN
         var exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
@@ -77,7 +76,7 @@ class ProjectServiceTest
 
         TaskConfigurationProperties mockConfig = configurationReturning(true);
         // system under test
-        var toTest = new ProjectService(mockRepository, mockGroupRepository, mockConfig);
+        var toTest = new ProjectService(mockRepository, mockGroupRepository, mockConfig, null);
 
         // WHEN
         var exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
@@ -89,7 +88,7 @@ class ProjectServiceTest
     @Test
     @DisplayName("Should throw IllegalArgumentException when configured to allow just one group" +
             " and no groups and no projects for given id")
-    void createGroup_noMultipleGroupsConfig_and_noUndoneGroupsExists_noProjects_throwsIllegalargumentException()
+    void createGroup_noMultipleGroupsConfig_and_noUndoneGroupsExists_noProjects_throwsIllegalArgumentException()
     {
         // GIVEN
         var mockRepository = mock(ProjectRepository.class);
@@ -99,7 +98,7 @@ class ProjectServiceTest
 
         TaskConfigurationProperties mockConfig = configurationReturning(true);
         // system under test
-        var toTest = new ProjectService(mockRepository, mockGroupRepository, mockConfig);
+        var toTest = new ProjectService(mockRepository, mockGroupRepository, mockConfig, null);
 
         // WHEN
         var exception = catchThrowable(() -> toTest.createGroup(LocalDateTime.now(), 0));
@@ -110,7 +109,7 @@ class ProjectServiceTest
 
     @Test
     @DisplayName("Should create new group from project")
-    void createGroup_configurationOK_existsProject_createsAndSaves_Group()
+    void createGroup_configurationOK_existsProject_createsAndSavesGroup()
     {
         // GIVEN
         var today = LocalDate.now().atStartOfDay();
@@ -121,11 +120,12 @@ class ProjectServiceTest
                 .thenReturn(Optional.of(project));
 
         InMemoryGroupRepository inMemoryGroupRepo = inMemoryGroupRepository();
+        var taskGroupServiceWithInMemRepo = dummyGroupService(inMemoryGroupRepo);
         int countBeforeCall = inMemoryGroupRepo.count();
 
         TaskConfigurationProperties mockConfig = configurationReturning(true);
 
-        var toTest = new ProjectService(mockRepository, inMemoryGroupRepo, mockConfig);
+        var toTest = new ProjectService(mockRepository, inMemoryGroupRepo, mockConfig, taskGroupServiceWithInMemRepo);
 
         // WHEN
 
@@ -138,6 +138,12 @@ class ProjectServiceTest
         assertThat(result.getTasks()).allMatch(task -> task.getDescription().equals("x"));
         assertThat(countBeforeCall + 1).isEqualTo(inMemoryGroupRepo.count());
     }
+
+    private TaskGroupService dummyGroupService(final InMemoryGroupRepository inMemoryGroupRepository)
+    {
+        return new TaskGroupService(inMemoryGroupRepository, null);
+    }
+
 
     private Project projectWith(String projectDescription, Set<Integer> daysToDeadline)
     {

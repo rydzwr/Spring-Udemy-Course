@@ -1,6 +1,7 @@
 package com.rydzwr.model.projection;
 
 import com.rydzwr.model.Task;
+import com.rydzwr.model.TaskGroup;
 
 import java.time.LocalDateTime;
 
@@ -29,8 +30,8 @@ public class GroupTaskWriteModel
         this.deadline = deadline;
     }
 
-    public Task toTask()
+    public Task toTask(final TaskGroup group)
     {
-        return new Task(description, deadline);
+        return new Task(description, deadline, group);
     }
 }

@@ -29,8 +29,15 @@ public class Task
 
     public Task(String description, LocalDateTime deadLine)
     {
+        this(description, deadLine, null);
+    }
+
+    public Task(String description, LocalDateTime deadLine, TaskGroup group)
+    {
         this.description = description;
         this.deadLine = deadLine;
+        if (group != null)
+            this.group = group;
     }
 
     public int getId()

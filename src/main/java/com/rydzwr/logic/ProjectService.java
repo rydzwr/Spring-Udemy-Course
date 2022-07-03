@@ -5,6 +5,7 @@ import com.rydzwr.model.*;
 import com.rydzwr.model.projection.GroupReadModel;
 import com.rydzwr.model.projection.GroupTaskWriteModel;
 import com.rydzwr.model.projection.GroupWriteModel;
+import com.rydzwr.model.projection.ProjectWriteModel;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -30,9 +31,9 @@ public class ProjectService
         return repository.findAll();
     }
 
-    public Project save(Project toSave)
+    public Project save(ProjectWriteModel toSave)
     {
-        return repository.save(toSave);
+        return repository.save(toSave.toProject());
     }
 
     public GroupReadModel createGroup(LocalDateTime deadline, int projectId)
@@ -57,7 +58,7 @@ public class ProjectService
                             }
                             ).collect(Collectors.toSet())
             );
-            return taskGroupService.createGroup(targetGroup);
+            return taskGroupService.createGroup(targetGroup, project);
         }).orElseThrow(() -> new IllegalArgumentException("Project with given id not found"));
         return result;
     }

@@ -1,6 +1,7 @@
 package com.rydzwr.logic;
 
 import com.rydzwr.TaskConfigurationProperties;
+import com.rydzwr.model.Project;
 import com.rydzwr.model.TaskGroup;
 import com.rydzwr.model.TaskGroupRepository;
 import com.rydzwr.model.TaskRepository;
@@ -26,7 +27,12 @@ public class TaskGroupService
 
     public GroupReadModel createGroup(final GroupWriteModel source)
     {
-        TaskGroup result = repository.save(source.toGroup());
+        return createGroup(source, null);
+    }
+
+    public GroupReadModel createGroup(final GroupWriteModel source, final Project project)
+    {
+        TaskGroup result = repository.save(source.toGroup(project));
         return new GroupReadModel(result);
     }
 
